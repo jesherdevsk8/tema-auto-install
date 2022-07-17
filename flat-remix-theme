@@ -1,13 +1,19 @@
 sudo apt install wget git
 
-wget https://archive.org/download/bliss-600dpi/bliss-600dpi.png -P ~/Imagens
+wget hhttps://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip -P ~/Downloads
 
-git clone https://github.com/B00merang-Project/Windows-XP.git Windows-XP-Themes
+wget https://github.com/ful1e5/Bibata_Cursor/releases/download/v1.1.2/Bibata-Modern.tar.gz -P ~/Downloads
 
-git clone https://github.com/B00merang-Artwork/Windows-XP.git Windows-XP-Icons
+git clone https://github.com/daniruiz/flat-remix-gtk.git ~/Downloads/Flat-Remix-Theme
 
-mkdir .themes .icons
+git clone https://github.com/daniruiz/flat-remix.git ~/Downloads/Flat-Remix-Icons
 
-cp -r 'Windows-XP-Themes/Windows XP Luna' ~/.themes
+mkdir -P .themes .icons .fonts
 
-cp -r 'Windows-XP-Icons/' ~/.icons
+unzip ~/Downloads/Hack.zip -d ~/.fonts
+
+tar -xvf ~/Downloads/Bibata-Modern.tar.gz -C ~/.icons
+
+cp -r ~/Downloads/Flat-Remix-Theme/themes/Flat-Remix-* ~/.themes
+
+cp -r ~/Downloads/Flat-Remix-Icons/Flat-Remix-* ~/.icons
