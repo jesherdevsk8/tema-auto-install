@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# -----------------------------------------------------------------
+# Script   : flat-remix-install
+# Descrição: Auto Instalação de Tema Pessoal
+# Versão   : 1.0
+# Autor    : Jesher Minelli <jesherdevsk8@gmail.com>
+# Data     : qua 13 jul 2022
+# Licença  : GNU/GPL v3.0
+# -----------------------------------------------------------------
+# Uso: ./flat-remix-install
+# -----------------------------------------------------------------
+
+#-------------------------- VARIAVEIS -----------------------------
+
+pacotes=( wget git )
+dir_themes_icons=( "$HOME/.themes" "$HOME/.icons" "$HOME/.fonts" )
+dir_downloads="$HOME/Downloads"
+download_wget=( "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Hack.zip"
+								"https://github.com/ful1e5/Bibata_Cursor/releases/download/v1.1.2/Bibata-Modern.tar.gz" )
+clone_theme="https://github.com/daniruiz/flat-remix-gtk.git $dir_downloads/Flat-Remix-Themes"
+clone_icon="https://github.com/daniruiz/flat-remix.git $dir_downloads/Flat-Remix-Icons"
+themes="$dir_downloads/Flat-Remix-Themes"
+icons="$dir_downloads/Flat-Remix-Icons"
+cursors="$dir_downloads/Bibata-Cursors"
+
+arquivo_de_log="$HOME/github/Flat-Remix-install/flat-remix-install.log"
+
+#--------------------------- TESTES -------------------------------
+
+[[ $UID = '0' ]] && echo "Root Não...!" && exit 1
+
+# Se os diretórios existem, nada acontece (no error if existing)
+mkdir -p "$themes" "$icons" "$dir_downloads" #"$dir_imagens"
+
+for dirs in "${dir_themes_icons[@]}"; do
+	mkdir -p "$dirs"
+done
+
+#--------------------------- FUNÇÕES ------------------------------
+
+function instalar_dependencias(){
+	for programas in "${pacotes[@]}"; do
+		if [[ ! -x $(which "$programas") ]]; then
+			echo "[INFO] $programas Não está instalado. Instalando......."
+			sudo apt install "$programas" -y 1> arquivo_de_log 2>&1
+		fi			
+	done
+}
+
+# baixar e installar os pacotes
+function baixar_pacotes(){
+	for downloads in "${download_wget[@]}"; do
+		local arquivos=$(cut -d / -f 9 <<< "$downloads") # pegar nome do arquivo no array
+		local extensao=$(cut -d . -f 2 <<< "$arquivos") # pegar a extensão do arquivo
+		if [[ ! -f "$dir_downloads/$arquivos" ]]; then
+			wget "$downloads" -P "$dir_downloads" 2> arquivo_de_log
+			# descompacatar arquivos
+			case "${extensao[@]}" in
+				zip) unzip -q "$dir_downloads/$arquivos" -d "$HOME/.fonts/" 		;;
+				tar) tar -xf "$dir_downloads/$arquivos" -C "$HOME/.icons/"  		;;
+			esac
+		fi
+	done
+}
+
+function clona_repo() {
+	[[ -d "$icons" ]] && git clone $clone_icon
+	[[ -d "$themes" ]] && git clone $clone_theme
+}
+
+function copiar_clones(){
+	cp -r "$themes/themes/Flat-Remix-"* "$HOME/.themes"
+	cp -r "$icons/Flat-Remix-"* "$HOME/.icons"
+}
+
+#---------------------------- MAIN --------------------------------
+
+instalar_dependencias
+baixar_pacotes
+clona_repo
+[[ "$?" = '0' ]] && copiar_clones
