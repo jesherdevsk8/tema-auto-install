@@ -10,6 +10,8 @@
 # Uso: ./flat-remix-install
 # -----------------------------------------------------------------
 
+# COLOCAR VERIFICAÇÃO DE DISTRO #
+
 #-------------------------- VARIAVEIS -----------------------------
 
 pacotes=( wget git )
@@ -25,7 +27,19 @@ cursors="$dir_downloads/Bibata-Cursors"
 
 arquivo_de_log="$HOME/github/Flat-Remix-install/flat-remix-install.log"
 
+#Cor
+verde="\e[32;1m"
+tira_cor="\e[m"
+
 #--------------------------- TESTES -------------------------------
+
+# Checando a distribuição correta
+if [[ $(lsb_release -cs) = 'focal' ]]; then
+  echo -e "${verde}Distribuição homologada. Prosseguindo com o script...${tira_cor}"
+else
+  echo -e "${verde}Distribuição não homologada para uso deste script.${tira_cor}"
+  exit 1
+fi
 
 [[ $UID = '0' ]] && echo "Root Não...!" && exit 1
 
